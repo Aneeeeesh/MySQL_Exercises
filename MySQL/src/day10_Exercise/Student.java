@@ -14,9 +14,5 @@ public class Student {
 			System.out.println("Enter name of student: ");
 			name = in.next();
 		}
-		
-//		void show() {
-//			System.out.println(id + " " + name);
-//		}
 
 }
