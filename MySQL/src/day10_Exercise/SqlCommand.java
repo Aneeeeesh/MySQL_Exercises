@@ -20,21 +20,17 @@ public class SqlCommand {
 			}
 		}
 		
-		public void insertData(Student s) {
+		public void insertData(Student s) throws SQLException {
 			
-			try {
-				String query = "insert into Student values(?,?)";
-				
-				PreparedStatement prepst = con.prepareStatement(query);
-				prepst.setInt(1, s.id);
-				prepst.setString(2, s.name);
-				prepst.executeUpdate();
-				
-				System.out.println("\nRow inserted.");
-			}
-			catch(Exception e) {
-				System.out.println(e);
-			}
+			String query = "insert into Student values(?,?)";
+			
+			PreparedStatement prepst = con.prepareStatement(query);
+			prepst.setInt(1, s.id);
+			prepst.setString(2, s.name);
+			prepst.executeUpdate();
+			
+			System.out.println("\nRow inserted.");
+		
 		}
 		
 		public void showAll() throws SQLException {
