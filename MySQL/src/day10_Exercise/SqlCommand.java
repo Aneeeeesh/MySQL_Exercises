@@ -56,7 +56,7 @@ public class SqlCommand {
 		
 		public void deleteRow(int row) throws SQLException {
 			rs.absolute(row);
-			System.out.println("\nThe following record has been deleted!" +  "\n" + rs.getInt(1) + "\t" + rs.getString(2));
+			System.out.println("\nThe following record has been deleted!\n" + rs.getInt(1) + "\t" + rs.getString(2));
 			rs.deleteRow();
 		}
 		
