@@ -51,7 +51,7 @@ public class SqlCommand {
 			rs.absolute(row);
 			rs.updateInt(column, new_value);
 			rs.updateRow();
-			System.out.print("\nRow updated!");
+			System.out.println("\nRow updated!");
 		}
 		
 		public void deleteRow(int row) throws SQLException {

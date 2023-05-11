@@ -19,7 +19,7 @@ public class Test {
 						+ "\n4. Show table"
 						+ "\n5. Exit");
 	
-				String choice = sc.nextLine();
+				String choice = sc.next();
 				
 				try {
 				
