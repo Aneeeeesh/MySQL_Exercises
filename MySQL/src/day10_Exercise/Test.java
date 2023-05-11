@@ -31,7 +31,7 @@ public class Test {
 					case "2" :  System.out.println("\nEnter the row, column of value to be changed: ");
 								int row = sc.nextInt();
 								int column = sc.nextInt();
-								System.out.println("\nEnter new value: ");
+								System.out.print("\nEnter new value: ");
 								var new_value = sc.next();
 								command.updateData(row, column, new_value);
 								continue;
