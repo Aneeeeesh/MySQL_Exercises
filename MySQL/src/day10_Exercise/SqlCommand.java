@@ -45,6 +45,7 @@ public class SqlCommand {
 			rs.absolute(row);
 			rs.updateString(column, new_value);
 			rs.updateRow();
+			System.out.println("\nRow updated!");
 		}
 		
 		public void updateData(int row, int column, int new_value) throws SQLException {
