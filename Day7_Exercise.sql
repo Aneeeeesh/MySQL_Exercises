@@ -2,7 +2,7 @@ CREATE DATABASE Student;
 
 USE Student;
 
-
+#Define PK for StudentDetails table. And try searching with ID and then Email ID (Hint ask them to create an index and ask them to explain the need of index).
 CREATE TABLE StudentDetails(ID int PRIMARY KEY, FirstName varchar(255), LastName varchar(255), Gender varchar(1), Email varchar(255), STD varchar(5));
 
 INSERT INTO StudentDetails (ID,firstname,lastname,gender,email,std) VALUES 
@@ -23,6 +23,7 @@ SELECT * FROM StudentDetails WHERE Id = 9;
 
 CREATE index st_id on Student.StudentDetails (ID);
 
+#Design one or more extra tables for the Student Database on your own and come up with PK FK and other relationships
 CREATE table Subjects (Code varchar(10) PRIMARY KEY, 
 						Subject varchar(255));
 					
@@ -30,7 +31,7 @@ INSERT INTO Subjects(Code, Subject) VALUES
 				('S001', 'English'),
 				('S002', 'Math');
 			
-
+#Design and Create New Table Marks 
 CREATE table Marks (StudentID int, 
 					SubjectCode varchar(255), 
 					Mark int,  
@@ -66,26 +67,34 @@ INSERT INTO Marks(StudentID, SubjectCode, Mark) VALUES
 				(12, 'S002', 90);
 
 
-SELECT * FROM StudentDetails s INNER JOIN Marks m ON s.ID = m.StudentID INNER JOIN Subjects ss ON m.SubjectCode = ss.Code;	
-
+#List first name , subject, mark, Std of the students whose marks is greater than 90% in any Subject of the current academic year. (hint check for Joins)
 SELECT FirstName , Subject, Mark, STD 
 	FROM StudentDetails sd 
 	INNER JOIN Marks m ON sd.ID = m.StudentID 
 	INNER JOIN Subjects s ON m.SubjectCode = s.Code
 	WHERE Mark > 90;
 
-SELECT FirstName , Subject, Mark, STD
+#Implement the above using sub query (hint check for sub query if 3 is used via join or vice versa)
+SELECT DISTINCT FirstName , Subject, Mark, STD
 	FROM StudentDetails sd , Marks m, Subjects s
-	WHERE m.Mark > 90 AND sd.ID = m.StudentID AND m.SubjectCode = s.Code;
+	WHERE m.Mark NOT IN (
+	SELECT Mark
+	FROM Marks 
+	WHERE Mark <= 90)
+	AND sd.ID = m.StudentID 
+	AND m.SubjectCode = s.Code;
 
+#Delete a student entry and ensure their marks are also deleted.
 DELETE FROM StudentDetails WHERE ID = 5;
 
+#Find students for whom no marks have been entered.( hint left join)
 SELECT ID, FirstName, LastName
 	FROM StudentDetails  sd
 	LEFT JOIN Marks m ON  sd.ID = m.StudentID
 	WHERE m.Mark IS NULL
 	GROUP BY sd.ID;
 
+#Find which student scored the highest total mark in the current academic year of std X
 SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
 	FROM StudentDetails sd, Marks m
 	WHERE m.StudentID = sd.ID AND STD = 'X' AND m.Mark IS NOT NULL
@@ -93,7 +102,7 @@ SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
 	ORDER BY TotalMarks DESC 
 	LIMIT 1;
 
-
+#Find which student scored the lowest total mark in the current academic year of std X
 SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
 	FROM StudentDetails sd, Marks m
 	WHERE m.StudentID = sd.ID AND STD = 'X' AND m.Mark IS NOT NULL
