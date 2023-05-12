@@ -26,13 +26,45 @@ CREATE index st_id on Student.StudentDetails (ID);
 #Design one or more extra tables for the Student Database on your own and come up with PK FK and other relationships
 CREATE table Subjects (Code varchar(10) PRIMARY KEY, 
 						Subject varchar(255));
-					
 INSERT INTO Subjects(Code, Subject) VALUES
 				('S001', 'English'),
 				('S002', 'Math');
 			
+CREATE TABLE Marks2022 (StudentID int, 
+					SubjectCode varchar(25), 
+					Mark int,  
+					FOREIGN KEY(StudentID) REFERENCES StudentDetails(ID)
+					ON DELETE CASCADE,
+					FOREIGN KEY(SubjectCode) REFERENCES Subjects(Code)
+					ON DELETE CASCADE);
+INSERT INTO Marks2022 (StudentID, SubjectCode, Mark) VALUES
+				(1, 'S001', 67),
+				(2, 'S001', 89),
+				(3, 'S001', 90),
+				(4, 'S001', 78),
+				(5, 'S001', 81),
+				(6, 'S001', 99),
+				(7, 'S001',90),
+				(8, 'S001', 94),
+				(9, 'S001', 78),
+				(10, 'S001', 68),
+				(11, 'S001', 92),
+				(12, 'S001', 87),
+				(1, 'S002', 89),
+				(2, 'S002', 88),
+				(3, 'S002', 79),
+				(4, 'S002', 76),
+				(5, 'S002', 98),
+				(6, 'S002', 91),
+				(7, 'S002',89),
+				(8, 'S002', 93),
+				(9, 'S002', 87),
+				(10, 'S002', 92),
+				(11, 'S002', 75),
+				(12, 'S002', 78);
+			
 #Design and Create New Table Marks 
-CREATE table Marks (StudentID int, 
+CREATE table Marks2023 (StudentID int, 
 					SubjectCode varchar(255), 
 					Mark int,  
 					FOREIGN KEY(StudentID) REFERENCES StudentDetails(ID)
@@ -40,7 +72,7 @@ CREATE table Marks (StudentID int,
 					FOREIGN KEY(SubjectCode) REFERENCES Subjects(Code)
 					ON DELETE CASCADE);
 				
-INSERT INTO Marks(StudentID, SubjectCode, Mark) VALUES
+INSERT INTO Marks2023(StudentID, SubjectCode, Mark) VALUES
 				(1, 'S001', 89),
 				(2, 'S001', 78),
 				(3, 'S001', 83),
@@ -60,26 +92,25 @@ INSERT INTO Marks(StudentID, SubjectCode, Mark) VALUES
 				(5, 'S002', 98),
 				(6, 'S002', 91),
 				(7, 'S002',NULL),
-				(8, 'S002', 88),
+				(8, 'S002', 91),
 				(9, 'S002', 62),
 				(10, 'S002', 68),
 				(11, 'S002', 77),
 				(12, 'S002', 90);
 
-
 #List first name , subject, mark, Std of the students whose marks is greater than 90% in any Subject of the current academic year. (hint check for Joins)
 SELECT FirstName , Subject, Mark, STD 
 	FROM StudentDetails sd 
-	INNER JOIN Marks m ON sd.ID = m.StudentID 
+	INNER JOIN Marks2023 m ON sd.ID = m.StudentID 
 	INNER JOIN Subjects s ON m.SubjectCode = s.Code
 	WHERE Mark > 90;
 
 #Implement the above using sub query (hint check for sub query if 3 is used via join or vice versa)
 SELECT DISTINCT FirstName , Subject, Mark, STD
-	FROM StudentDetails sd , Marks m, Subjects s
+	FROM StudentDetails sd , Marks2023 m, Subjects s
 	WHERE m.Mark NOT IN (
 	SELECT Mark
-	FROM Marks 
+	FROM Marks2023 
 	WHERE Mark <= 90)
 	AND sd.ID = m.StudentID 
 	AND m.SubjectCode = s.Code;
@@ -90,13 +121,27 @@ DELETE FROM StudentDetails WHERE ID = 5;
 #Find students for whom no marks have been entered.( hint left join)
 SELECT ID, FirstName, LastName
 	FROM StudentDetails  sd
-	LEFT JOIN Marks m ON  sd.ID = m.StudentID
+	LEFT JOIN Marks2023 m ON  sd.ID = m.StudentID
 	WHERE m.Mark IS NULL
 	GROUP BY sd.ID;
 
+#List first name , subject, mark, Std of the students whose marks is greater than 90% in two Subjects in the current academic year 
+#and previous academic year. (hint check for Joins, set operation)
+SELECT sd.FirstName, s.Subject, m.Mark, sd.std
+	FROM StudentDetails sd 
+	JOIN Marks2023 m ON sd.ID = m.StudentID 
+	JOIN Subjects s ON m.SubjectCode = s.Code 
+	WHERE m.Mark > 90
+	AND EXISTS (
+		SELECT *
+		FROM Marks2022 m2
+		WHERE m2.StudentID = sd.ID
+		AND m2.SubjectCode = s.Code 
+		AND m2.Mark > 90);
+
 #Find which student scored the highest total mark in the current academic year of std X
 SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
-	FROM StudentDetails sd, Marks m
+	FROM StudentDetails sd, Marks2023 m
 	WHERE m.StudentID = sd.ID AND STD = 'X' AND m.Mark IS NOT NULL
 	GROUP BY sd.ID
 	ORDER BY TotalMarks DESC 
@@ -104,12 +149,8 @@ SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
 
 #Find which student scored the lowest total mark in the current academic year of std X
 SELECT ID, FirstName, LastName ,  SUM(m.Mark) AS TotalMarks
-	FROM StudentDetails sd, Marks m
+	FROM StudentDetails sd, Marks2023 m
 	WHERE m.StudentID = sd.ID AND STD = 'X' AND m.Mark IS NOT NULL
 	GROUP BY sd.ID
 	ORDER BY TotalMarks 
-	LIMIT 1;
-
-
-
-			
+	LIMIT 1;	
